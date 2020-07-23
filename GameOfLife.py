@@ -1,9 +1,12 @@
 import random
 import pygame
 
+LIVE = 1
+DEAD = 0
+
 
 class GameOfLife:
-    def __init__(self, height=400, weight=400, cell_size=5, dead_color=(0, 0, 0), live_color=(255, 255, 255), fps=30):
+    def __init__(self, height=400, weight=400, cell_size=10, dead_color=(0, 0, 0), live_color=(255, 255, 255), fps=30):
         self.height = height
         self.weight = weight
         self.dead_color = dead_color
@@ -13,6 +16,7 @@ class GameOfLife:
         self.row_number = height//cell_size
         self.column_number = weight//cell_size
         self.map = self.get_blank_map()
+        self.status = False  # paused
 
     def get_random_map(self):
         res = []
@@ -30,10 +34,7 @@ class GameOfLife:
         new_map = self.get_blank_map()
         for row in range(self.row_number):
             for col in range(self.column_number):
-                try:
-                    new_map[row][col] = self.get_next_generation_cell(row, col)
-                except:
-                    pass
+                new_map[row][col] = self.get_next_generation_cell(row, col)
         return new_map
 
     def refresh(self):
@@ -52,31 +53,36 @@ class GameOfLife:
         number_of_living_neighbors = self.get_cell_status(row-1, col+1)
         number_of_living_neighbors = self.get_cell_status(row+1, col-1)
         old_cell = self.map[row][col]
-        if old_cell == 1:
+        if old_cell == LIVE:
             # Death due to loneliness
             if number_of_living_neighbors <= 1:
-                return 0
+                return DEAD
             # Death due to overcrowding
             if number_of_living_neighbors > 3:
-                return 0
+                return DEAD
         elif number_of_living_neighbors == 3:
-            return 1
+            return LIVE
         return old_cell
 
     def get_cell_status(self, row, col):
         try:
             return self.map[row][col]
         except:
-            return 0
+            return DEAD  # cell not exist
+
+    def get_containing_cell(self, position):
+        return (position[0] // self.cell_size, position[1] // self.cell_size)
 
     def draw_map(self):
         self.screen.fill(self.dead_color)
         for row in range(self.row_number):
             for col in range(self.column_number):
                 cell = self.map[row][col]
-                rect = pygame.Rect((row*self.cell_size, col*self.cell_size),(self.cell_size, self.cell_size))
+                rect = pygame.Rect(
+                    (row*self.cell_size, col*self.cell_size), (self.cell_size, self.cell_size))
                 image = pygame.Surface((self.cell_size, self.cell_size))
-                image.fill(self.live_color if cell == 1 else self.dead_color)
+                image.fill(self.live_color if cell ==
+                           LIVE else self.dead_color)
                 self.screen.blit(image, rect)
         pygame.display.update()
 
@@ -88,7 +94,15 @@ class GameOfLife:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     quit()
-            self.refresh()
+                if event.type == pygame.KEYDOWN:
+                    if event.unicode == " ":
+                        self.status = not self.status
+                if event.type == pygame.MOUSEBUTTONUP:
+                    cont_cell = self.get_containing_cell(
+                        pygame.mouse.get_pos())
+                    self.map[cont_cell[0]][cont_cell[1]] = LIVE
+            if self.status:
+                self.refresh()
 
 
 game = GameOfLife()
