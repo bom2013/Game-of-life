@@ -1,7 +1,7 @@
 # Game-of-life
 Python implementation of Game of life
 ## How to use
-* Download [GameOfLife.py](../blob/master/GameOfLife.py)
+* Download [GameOfLife.py](https://github.com/bom2013/Game-of-life/blob/master/GameOfLife.py "GameOfLife.py")
 * run it :)  
 
 **Note**: The program start in pause mode
