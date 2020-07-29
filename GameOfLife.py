@@ -28,7 +28,7 @@ class GameOfLife:
         return res
 
     def get_blank_map(self):
-        return self.row_number*[[0]*self.column_number]
+        return list(map(lambda x: list(map(lambda x: 0, range(self.column_number))), range(self.row_number)))
 
     def get_next_generation_map(self):
         new_map = self.get_blank_map()
@@ -44,14 +44,14 @@ class GameOfLife:
 
     def get_next_generation_cell(self, row, col):
         number_of_living_neighbors = 0
-        number_of_living_neighbors = self.get_cell_status(row-1, col-1)
-        number_of_living_neighbors = self.get_cell_status(row-1, col)
-        number_of_living_neighbors = self.get_cell_status(row, col-1)
-        number_of_living_neighbors = self.get_cell_status(row+1, col+1)
-        number_of_living_neighbors = self.get_cell_status(row, col+1)
-        number_of_living_neighbors = self.get_cell_status(row+1, col)
-        number_of_living_neighbors = self.get_cell_status(row-1, col+1)
-        number_of_living_neighbors = self.get_cell_status(row+1, col-1)
+        number_of_living_neighbors += self.get_cell_status(row-1, col-1)
+        number_of_living_neighbors += self.get_cell_status(row-1, col)
+        number_of_living_neighbors += self.get_cell_status(row, col-1)
+        number_of_living_neighbors += self.get_cell_status(row+1, col+1)
+        number_of_living_neighbors += self.get_cell_status(row, col+1)
+        number_of_living_neighbors += self.get_cell_status(row+1, col)
+        number_of_living_neighbors += self.get_cell_status(row-1, col+1)
+        number_of_living_neighbors += self.get_cell_status(row+1, col-1)
         old_cell = self.map[row][col]
         if old_cell == LIVE:
             # Death due to loneliness
@@ -100,7 +100,10 @@ class GameOfLife:
                 if event.type == pygame.MOUSEBUTTONUP:
                     cont_cell = self.get_containing_cell(
                         pygame.mouse.get_pos())
-                    self.map[cont_cell[0]][cont_cell[1]] = LIVE
+                    # Swap between LIVE(1) and DEAD(0)
+                    self.map[cont_cell[0]][cont_cell[1]
+                                           ] = self.map[cont_cell[0]][cont_cell[1]] ^ 1
+                    self.draw_map()
             if self.status:
                 self.refresh()
 
