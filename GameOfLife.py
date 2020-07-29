@@ -6,7 +6,19 @@ DEAD = 0
 
 
 class GameOfLife:
-    def __init__(self, height=400, weight=400, cell_size=10, dead_color=(0, 0, 0), live_color=(255, 255, 255), fps=30):
+    def __init__(self, height=500, weight=500, cell_size=10, dead_color=(0, 0, 0), live_color=(255, 255, 255), fps=10):
+        self.height = height
+        self.weight = weight
+        self.dead_color = dead_color
+        self.live_color = live_color
+        self.fps = fps
+        self.cell_size = cell_size
+        self.row_number = height//cell_size
+        self.column_number = weight//cell_size
+        self.map = self.get_blank_map()
+        self.status = False  # paused
+
+    def reset(self, height=500, weight=500, cell_size=10, dead_color=(0, 0, 0), live_color=(255, 255, 255), fps=10):
         self.height = height
         self.weight = weight
         self.dead_color = dead_color
@@ -95,14 +107,24 @@ class GameOfLife:
                 if event.type == pygame.QUIT:
                     quit()
                 if event.type == pygame.KEYDOWN:
+                    # pause
                     if event.unicode == " ":
                         self.status = not self.status
+                    # reset
+                    if event.unicode == "r":
+                        self.reset()
+                        self.draw_map()
+                    if event.unicode == "+":
+                        self.fps += 2
+                    if event.unicode == "-":
+                        if self.fps>2:
+                            self.fps -= 2
                 if event.type == pygame.MOUSEBUTTONUP:
                     cont_cell = self.get_containing_cell(
                         pygame.mouse.get_pos())
                     # Swap between LIVE(1) and DEAD(0)
                     self.map[cont_cell[0]][cont_cell[1]
-                                           ] = self.map[cont_cell[0]][cont_cell[1]] ^ 1
+                                           ] = not self.map[cont_cell[0]][cont_cell[1]]
                     self.draw_map()
             if self.status:
                 self.refresh()
