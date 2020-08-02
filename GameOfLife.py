@@ -174,30 +174,24 @@ class GameOfLife:
 
     def get_containing_cell(self, position):
         """ 
-        Summary line. 
+        Get containing cell 
     
-        Extended description of function. 
+        Get the containing cell of mouse position 
     
         Parameters: 
-        arg1 (int): Description of arg1 
+        position (int): Mouse position 
     
         Returns: 
-        int: Description of return value 
+        (int, int) : Cell tuple position 
     
         """
         return (position[0] // self.cell_size, position[1] // self.cell_size)
 
     def draw_map(self):
         """ 
-        Summary line. 
+        Draw the map
     
-        Extended description of function. 
-    
-        Parameters: 
-        arg1 (int): Description of arg1 
-    
-        Returns: 
-        int: Description of return value 
+        Draw the game map on the pygame window 
     
         """
         self.screen.fill(self.dead_color)
